@@ -16,6 +16,12 @@ function setup_tests {
         {print}" \
         $1/composer/live-iso.ks
 
+    # do a backup of the original blueprints directory and get rid of the git
+    # directory (otherwise all of the initial changes in blueprints would have
+    # to be done using blueprints push)
+    cp -r $BLUEPRINTS_DIR ${BLUEPRINTS_DIR}.orig
+    rm -rf $BLUEPRINTS_DIR/git
+
     # append a section with additional option on kernel command line to example-http-server blueprint
     # which is used for building of most of the images
     cat >> $BLUEPRINTS_DIR/example-http-server.toml << __EOF__
@@ -27,6 +33,8 @@ __EOF__
 
 function teardown_tests {
     mv $1/composer/live-iso.ks.orig $1/composer/live-iso.ks
+    rm -rf $BLUEPRINTS_DIR
+    mv ${BLUEPRINTS_DIR}.orig $BLUEPRINTS_DIR
 }
 
 if [ -z "$CLI" ]; then
